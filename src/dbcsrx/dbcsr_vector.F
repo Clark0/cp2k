@@ -357,12 +357,12 @@ SUBROUTINE create_row_vec_from_matrix(dbcsr_vec, matrix, nrow)
 
 #include "hash_table.f90"
 
-#:set instances = [ ('s', 'REAL(kind=real_4)',    '0.0_real_4'), &
-                    ('d', 'REAL(kind=real_8)',    '0.0_real_8'), &
-                    ('c', 'COMPLEX(kind=real_4)', 'CMPLX(0.0, 0.0, real_4)'), &
-                    ('z', 'COMPLEX(kind=real_8)', 'CMPLX(0.0, 0.0, real_8)') ]
+#:set instances = [ ('s', 'REAL(kind=real_4)',    '0.0_real_4',              1), &
+                    ('d', 'REAL(kind=real_8)',    '0.0_real_8',              1), &
+                    ('c', 'COMPLEX(kind=real_4)', 'CMPLX(0.0, 0.0, real_4)', 0), &
+                    ('z', 'COMPLEX(kind=real_8)', 'CMPLX(0.0, 0.0, real_8)', 0) ]
 
-#:for nametype, type, zero in instances
+#:for nametype, type, zero, xsmm in instances
 
 ! **************************************************************************************************
 !> \brief the real driver routine for the multiply, not all symmetries implemented yet
@@ -411,6 +411,9 @@ SUBROUTINE create_row_vec_from_matrix(dbcsr_vec, matrix, nrow)
 !> \param work_col ...
 ! **************************************************************************************************
   SUBROUTINE dbcsr_matrix_vector_mult_${nametype}$(matrix, vec_in, vec_out, alpha, beta, work_row, work_col)
+#if defined(__LIBXSMM) && ${xsmm}$
+    USE libxsmm ! WITHOUT ONLY because older library versions (no libxsmm_matmul) should be ignored
+#endif
     TYPE(dbcsr_type)                          :: matrix, vec_in, vec_out
     ${type}$                                  :: alpha, beta
     TYPE(dbcsr_type)                          :: work_row, work_col
@@ -458,8 +461,13 @@ SUBROUTINE create_row_vec_from_matrix(dbcsr_vec, matrix, nrow)
        prow=hash_table_get(fast_vec_col%hash_table,row)
        IF(fast_vec_col%blk_map_${nametype}$(prow)%assigned_thread .NE. ithread ) CYCLE
        pcol=hash_table_get(fast_vec_row%hash_table,col)
+#if defined(__LIBXSMM) && ${xsmm}$
+       CALL libxsmm_matmul(fast_vec_col%blk_map_${nametype}$(prow)%ptr, data_d, &
+                           fast_vec_row%blk_map_${nametype}$(pcol)%ptr, transb='T')
+#else
        fast_vec_col%blk_map_${nametype}$(prow)%ptr=fast_vec_col%blk_map_${nametype}$(prow)%ptr+&
             MATMUL(data_d,TRANSPOSE(fast_vec_row%blk_map_${nametype}$(pcol)%ptr))
+#endif
     END DO
     CALL dbcsr_iterator_stop(iter)
 !$OMP END PARALLEL
@@ -850,6 +858,9 @@ SUBROUTINE create_row_vec_from_matrix(dbcsr_vec, matrix, nrow)
 !> \param work_col ...
 ! **************************************************************************************************
   SUBROUTINE dbcsr_sym_matrix_vector_mult_${nametype}$(matrix, vec_in, vec_out, alpha, beta, work_row, work_col)
+#if defined(__LIBXSMM) && ${xsmm}$
+    USE libxsmm ! WITHOUT ONLY because older library versions (no libxsmm_matmul) should be ignored
+#endif
     TYPE(dbcsr_type)                          :: matrix, vec_in, vec_out
     ${type}$                                  :: alpha, beta
     TYPE(dbcsr_type)                          :: work_row, work_col
@@ -917,8 +928,14 @@ SUBROUTINE create_row_vec_from_matrix(dbcsr_vec, matrix, nrow)
           prow=hash_table_get(fast_vec_col%hash_table,row)
           rpcol=hash_table_get(res_fast_vec_row%hash_table,col)
           IF(res_fast_vec_row%blk_map_${nametype}$(rpcol)%assigned_thread .EQ. ithread .AND. row .NE. col) THEN
+#if defined(__LIBXSMM) && ${xsmm}$
+             CALL libxsmm_matmul(res_fast_vec_row%blk_map_${nametype}$(rpcol)%ptr, &
+                                 fast_vec_col%blk_map_${nametype}$(prow)%ptr, &
+                                 data_d, transa='T')
+#else
              res_fast_vec_row%blk_map_${nametype}$(rpcol)%ptr=res_fast_vec_row%blk_map_${nametype}$(rpcol)%ptr+&
                 MATMUL(TRANSPOSE(fast_vec_col%blk_map_${nametype}$(prow)%ptr),data_d)
+#endif
           END IF
        ELSE
           rpcol=hash_table_get(res_fast_vec_col%hash_table,col)

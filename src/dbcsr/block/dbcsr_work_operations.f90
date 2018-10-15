@@ -24,7 +24,7 @@
                                                 error_handler, needed_size
     INTEGER(KIND=int_8), ALLOCATABLE, &
       DIMENSION(:)                           :: keys
-    ${type1}$, DIMENSION(:), POINTER           :: target_data
+    ${type1}$, DIMENSION(:), POINTER CP_COMMA_CONTIGUOUS :: target_data
     ${type1}$, DIMENSION(:, :), POINTER        :: block_2d
     TYPE(btree_2d_data_${nametype1}$), ALLOCATABLE, &
       DIMENSION(:)                           :: values

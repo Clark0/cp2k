@@ -21,6 +21,8 @@ MODULE dbcsr_toollib
    USE kinds,                           ONLY: int_4,&
                                               int_8
 
+#include "../../base/base_uses.f90"
+
 !$ USE OMP_LIB, ONLY: omp_get_max_threads, omp_get_thread_num, omp_get_num_threads
 
    IMPLICIT NONE
@@ -216,6 +218,15 @@ CONTAINS
 !>       we return already the index in the table as a final result
 ! **************************************************************************************************
    FUNCTION joaat_hash(key) RESULT(hash_index)
+#if defined(__LIBXSMM) && CP_VERSION4(1, 9, 0, 6) <= \
+  CP_VERSION4(LIBXSMM_CONFIG_VERSION_MAJOR,  LIBXSMM_CONFIG_VERSION_MINOR, \
+              LIBXSMM_CONFIG_VERSION_UPDATE, LIBXSMM_CONFIG_VERSION_PATCH)
+      USE libxsmm
+      INTEGER, DIMENSION(:), INTENT(IN)                  :: key
+      INTEGER                                            :: hash_index
+      INTEGER, PARAMETER                                 :: seed = 0
+      hash_index = libxsmm_hash(key, seed)
+#else
       INTEGER, DIMENSION(:), INTENT(IN)                  :: key
       INTEGER                                            :: hash_index
 
@@ -239,6 +250,7 @@ CONTAINS
       ! In fortran 4-byte-integers have only 31 bits because they are signed
       ! In fortran the rightmost (least significant) bit is in position 0
       hash_index = INT(IBCLR(hash, 31))
+#endif
    END FUNCTION joaat_hash
 
 ! **************************************************************************************************

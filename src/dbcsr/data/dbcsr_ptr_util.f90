@@ -13,7 +13,7 @@
 !> \return new pointer
 ! **************************************************************************************************
   FUNCTION pointer_view_${nametype1}$ (original, lb, ub) RESULT (view)
-    ${type1}$, DIMENSION(:), POINTER :: original, view
+    ${type1}$, DIMENSION(:), POINTER CP_COMMA_CONTIGUOUS :: original, view
     INTEGER, INTENT(IN)                  :: lb, ub
     view => original(lb:ub)
   END FUNCTION pointer_view_${nametype1}$
@@ -34,8 +34,8 @@
 ! **************************************************************************************************
   SUBROUTINE ensure_array_size_${nametype1}$(array, array_resize, lb, ub, factor,&
        nocopy, memory_type, zero_pad)
-    ${type1}$, DIMENSION(:), POINTER                 :: array
-    ${type1}$, DIMENSION(:), POINTER, OPTIONAL       :: array_resize
+    ${type1}$, DIMENSION(:), POINTER CP_COMMA_CONTIGUOUS :: array
+    ${type1}$, DIMENSION(:), POINTER, OPTIONAL CP_COMMA_CONTIGUOUS :: array_resize
     INTEGER, INTENT(IN), OPTIONAL                  :: lb
     INTEGER, INTENT(IN)                            :: ub
     REAL(KIND=dp), INTENT(IN), OPTIONAL            :: factor
@@ -51,7 +51,7 @@
     TYPE(dbcsr_memtype_type)                 :: mem_type
     LOGICAL                                  :: dbg, docopy, &
                                                 pad
-    ${type1}$, DIMENSION(:), POINTER           :: newarray
+    ${type1}$, DIMENSION(:), POINTER CP_COMMA_CONTIGUOUS :: newarray
 
 !   ---------------------------------------------------------------------------
     !CALL timeset(routineN, error_handler)
@@ -199,12 +199,12 @@
 !> \param[in] mem_type    memory type
 ! **************************************************************************************************
   SUBROUTINE mem_alloc_${nametype1}$ (mem, n, mem_type)
-    ${type1}$, DIMENSION(:), POINTER        :: mem
+    ${type1}$, DIMENSION(:), POINTER CP_COMMA_CONTIGUOUS :: mem
     INTEGER, INTENT(IN)                   :: n
     TYPE(dbcsr_memtype_type), INTENT(IN)  :: mem_type
     CHARACTER(len=*), PARAMETER :: routineN = 'mem_alloc_${nametype1}$', &
       routineP = moduleN//':'//routineN
-    INTEGER                               :: error_handle
+    INTEGER                                            :: error_handle
 !   ---------------------------------------------------------------------------
 
     IF (careful_mod) &
@@ -264,11 +264,11 @@
 !> \param[in] mem_type    memory type
 ! **************************************************************************************************
   SUBROUTINE mem_dealloc_${nametype1}$ (mem, mem_type)
-    ${type1}$, DIMENSION(:), POINTER        :: mem
+    ${type1}$, DIMENSION(:), POINTER CP_COMMA_CONTIGUOUS :: mem
     TYPE(dbcsr_memtype_type), INTENT(IN)  :: mem_type
     CHARACTER(len=*), PARAMETER :: routineN = 'mem_dealloc_${nametype1}$', &
       routineP = moduleN//':'//routineN
-    INTEGER                               :: error_handle
+    INTEGER                                            :: error_handle
 !   ---------------------------------------------------------------------------
 
     IF (careful_mod) &
