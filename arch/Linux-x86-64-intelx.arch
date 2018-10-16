@@ -214,7 +214,7 @@ else # GNU GCC
     $(info ================================================================================)
     $(info This ARCH file relies on Intel Libraries. Please try the following:)
     $(info $$ source /opt/intel/compilers_and_libraries/linux/bin/compilervars.sh intel64)
-	$(info Note: Intel MPI is also required.)
+    $(info Note: Intel MPI is also required.)
     $(info ================================================================================)
     $(error Intel MKL not found!)
   endif
