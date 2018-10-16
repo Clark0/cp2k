@@ -742,7 +742,7 @@ CONTAINS
 
       CALL section_vals_val_get(print_key, "FILENAME", c_val=outPath)
       IF (outPath(1:1) == '=') THEN
-         filename = outPath(2:)
+         READ (outPath(2:), *) filename
          RETURN
       END IF
       IF (outPath == "__STD_OUT__") outPath = ""

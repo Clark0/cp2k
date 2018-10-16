@@ -343,17 +343,17 @@ CONTAINS
             CALL parser_get_object(parser, pot%comment)
          CASE ("ELEMENT")
             CALL parser_get_object(parser, line)
-            pot%symbol = line(2:3)
+            READ (line(2:3), *) pot%symbol
          CASE ("PSEUDO_TYPE")
             CALL parser_get_object(parser, line)
             line = ADJUSTL(line)
             il = LEN_TRIM(line)
-            pot%pseudo_type = line(2:il-1)
+            READ (line(2:il-1), *) pot%pseudo_type
          CASE ("RELATIVISTIC")
             CALL parser_get_object(parser, line)
             line = ADJUSTL(line)
             il = LEN_TRIM(line)
-            pot%relativistic = line(2:il-1)
+            READ (line(2:il-1), *) pot%relativistic
          CASE ("IS_ULTRASOFT")
             CALL parser_get_object(parser, line)
             line = ADJUSTL(line)
