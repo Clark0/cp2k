@@ -244,7 +244,7 @@ else # GNU GCC
     OPTFLAGS += -funroll-loops -ftree-vectorize
     DFLAGS   += -DNDEBUG
     ifneq (0,$(IPO))
-      OPTFLAGS += -flto -Wl,-flto
+      OPTFLAGS += -flto -Wl,-flto -Wno-lto-type-mismatch
     endif
     OPT = 3
   else
