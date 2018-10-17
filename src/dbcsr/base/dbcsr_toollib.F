@@ -20,7 +20,6 @@ MODULE dbcsr_toollib
                                               dbcsr_1d_s_sort
    USE kinds,                           ONLY: int_4,&
                                               int_8
-
 #include "../../base/base_uses.f90"
 
 !$ USE OMP_LIB, ONLY: omp_get_max_threads, omp_get_thread_num, omp_get_num_threads
@@ -219,8 +218,8 @@ CONTAINS
 ! **************************************************************************************************
    FUNCTION joaat_hash(key) RESULT(hash_index)
 #if defined(__LIBXSMM) && CP_VERSION4(1, 9, 0, 6) <= \
-  CP_VERSION4(LIBXSMM_CONFIG_VERSION_MAJOR,  LIBXSMM_CONFIG_VERSION_MINOR, \
-              LIBXSMM_CONFIG_VERSION_UPDATE, LIBXSMM_CONFIG_VERSION_PATCH)
+      CP_VERSION4(LIBXSMM_CONFIG_VERSION_MAJOR, LIBXSMM_CONFIG_VERSION_MINOR, \
+      LIBXSMM_CONFIG_VERSION_UPDATE, LIBXSMM_CONFIG_VERSION_PATCH)
       USE libxsmm
       INTEGER, DIMENSION(:), INTENT(IN)                  :: key
       INTEGER                                            :: hash_index
