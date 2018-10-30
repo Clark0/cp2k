@@ -20,17 +20,11 @@
 #define CPWARN(msg) CALL cp__w(__SHORT_FILE__,__LINE__,msg)
 #define CPABORT(msg) CALL cp__b(__SHORT_FILE__,__LINE__,msg)
 
-! CPASSERT appears to have side-effects, and it cannot be compiled out.
+! CPASSERT can be elided if NDEBUG is defined.
 #if defined(NDEBUG) && 0
 # define CPASSERT(cond)
 #else
 # define CPASSERT(cond) IF(.NOT.(cond))CALL cp__a(__SHORT_FILE__,__LINE__)
-#endif
-! CPXASSERT which is guaranteed to compile-out in release builds.
-#if defined(NDEBUG)
-# define CPXASSERT(cond)
-#else
-# define CPXASSERT(cond) CPASSERT(cond)
 #endif
 
 ! The MARK_USED macro can be used to mark an argument/variable as used.
@@ -38,11 +32,10 @@
 ! but deal elegantly with e.g. library wrapper routines that take arguments only used if the library is linked in. 
 ! This code should be valid for any Fortran variable, is always standard conforming,
 ! and will be optimized away completely by the compiler
-!
 #define MARK_USED(foo) IF(.FALSE.)THEN; DO ; IF(SIZE(SHAPE(foo))==-1) EXIT ;  END DO ; ENDIF
 
 ! Calculate version number from 3-components.
-#define CP_VERSION3(MAJOR, MINOR, UPDATE) ((MAJOR) * 10000 + (MINOR) * 100 + (UPDATE))
+#define CPVERSION(MAJOR, MINOR, UPDATE) ((MAJOR) * 10000 + (MINOR) * 100 + (UPDATE))
 ! Calculate version number from 4-components.
 #define CP_VERSION4(MAJOR, MINOR, UPDATE, PATCH) ((MAJOR) * 100000000 + (MINOR) * 1000000 + (UPDATE) * 10000 + (PATCH))
 
@@ -57,7 +50,7 @@
 ! needs to be present (no way to detect standard by using the preprocessor).
 !
 #if !defined(CP_DISABLE_ATTRIBS) && defined(__F2008)
-# if defined(__GFORTRAN__) && (CP_VERSION3(4, 6, 0) <= CP_VERSION3(__GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__))
+# if defined(__GFORTRAN__) && (CPVERSION(4, 6, 0) <= CPVERSION(__GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__))
 #   define CP_CONTIGUOUS CONTIGUOUS
 #   define CP_COMMA_CONTIGUOUS , CONTIGUOUS
 # elif defined(__INTEL_COMPILER) && (1210 <= __INTEL_COMPILER)
