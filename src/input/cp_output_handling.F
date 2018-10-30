@@ -742,7 +742,8 @@ CONTAINS
 
       CALL section_vals_val_get(print_key, "FILENAME", c_val=outPath)
       IF (outPath(1:1) == '=') THEN
-         READ (outPath(2:), *) filename
+         CPASSERT(LEN(outPath) - 1 <= LEN(filename))
+         filename = outPath(2:)
          RETURN
       END IF
       IF (outPath == "__STD_OUT__") outPath = ""

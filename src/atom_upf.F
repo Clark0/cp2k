@@ -343,7 +343,8 @@ CONTAINS
             CALL parser_get_object(parser, pot%comment)
          CASE ("ELEMENT")
             CALL parser_get_object(parser, line)
-            READ (line(2:3), *) pot%symbol
+            CPASSERT(2 <= LEN(pot%symbol))
+            pot%symbol = line(2:3)
          CASE ("PSEUDO_TYPE")
             CALL parser_get_object(parser, line)
             line = ADJUSTL(line)
