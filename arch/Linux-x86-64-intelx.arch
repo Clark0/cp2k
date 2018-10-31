@@ -168,14 +168,12 @@ ifeq (0,$(GNU)) # Intel
     else ifeq (2,$(AVX))
       TARGET = -march=core-avx2
     else ifeq (3,$(AVX))
-      ifeq (0,$(MIC))
-        ifneq (file,$(origin MIC))
-          TARGET = -xCORE-AVX512 -qopt-zmm-usage=high
-        else
-          TARGET = -xCOMMON-AVX512
-        endif
-      else
+      ifeq (,$(MIC))
+        TARGET = -xCOMMON-AVX512
+      else ifneq (0,$(MIC))
         TARGET = -xMIC-AVX512
+      else
+        TARGET = -xCORE-AVX512 -qopt-zmm-usage=high
       endif
     else ifneq (0,$(SSE))
       TARGET = -xSSE3
@@ -226,12 +224,12 @@ else # GNU GCC
       TARGET = -march=core-avx2
     else ifeq (3,$(AVX))
       TARGET = -mfma -mavx512f -mavx512cd
-      ifeq (0,$(MIC))
-        ifneq (file,$(origin MIC)) # AVX512/Core
-          TARGET += -mavx512dq -mavx512bw -mavx512vl
-        endif
-      else # AVX512/MIC
+      ifneq (,$(MIC))
+      ifneq (0,$(MIC)) # AVX512/MIC
         TARGET += -mavx512pf -mavx512er
+      else # AVX512/Core
+        TARGET += -mavx512dq -mavx512bw -mavx512vl
+      endif
       endif
     else ifneq (0,$(SSE))
       TARGET = -mSSE3
