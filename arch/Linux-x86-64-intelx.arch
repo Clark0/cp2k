@@ -225,14 +225,13 @@ else # GNU GCC
     else ifeq (2,$(AVX))
       TARGET = -march=core-avx2
     else ifeq (3,$(AVX))
+      TARGET = -mfma -mavx512f -mavx512cd
       ifeq (0,$(MIC))
         ifneq (file,$(origin MIC)) # AVX512/Core
-          TARGET = -mavx512f -mavx512cd -mavx512dq -mavx512bw -mavx512vl
-        else # AVX512F
-          TARGET = -mavx512f -mavx512cd
+          TARGET += -mavx512dq -mavx512bw -mavx512vl
         endif
       else # AVX512/MIC
-        TARGET = -mavx512f -mavx512cd -mavx512pf -mavx512er
+        TARGET += -mavx512pf -mavx512er
       endif
     else ifneq (0,$(SSE))
       TARGET = -mSSE3
