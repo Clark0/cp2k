@@ -34,7 +34,8 @@
 ! and will be optimized away completely by the compiler
 #define MARK_USED(foo) IF(.FALSE.)THEN; DO ; IF(SIZE(SHAPE(foo))==-1) EXIT ;  END DO ; ENDIF
 
-! Calculate version number from 3-components.
+! Calculate version number from 3-components. Can be used for comparison e.g.,
+! CPVERSION(4, 9, 0) <= CPVERSION(__GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__)
 #define CPVERSION(MAJOR, MINOR, UPDATE) ((MAJOR) * 10000 + (MINOR) * 100 + (UPDATE))
 ! Calculate version number from 4-components.
 #define CP_VERSION4(MAJOR, MINOR, UPDATE, PATCH) ((MAJOR) * 100000000 + (MINOR) * 1000000 + (UPDATE) * 10000 + (PATCH))
