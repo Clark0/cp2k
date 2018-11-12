@@ -23,16 +23,16 @@ function upload_file {
     URL=$1
     FILE=$2
     CONTENT_TYPE=$3
-    wget --quiet --method=PUT --header="content-type: ${CONTENT_TYPE}" --header="cache-control: no-cache" --body-file="${FILE}" "${URL}"
+    wget --quiet --output-document=- --method=PUT --header="content-type: ${CONTENT_TYPE}" --header="cache-control: no-cache" --body-file="${FILE}" "${URL}" > /dev/null
 }
 
 # Get cp2k sources.
 if [ -n "${GIT_REF}" ]; then
     echo -e "\n========== Fetching Git Commit ==========" | tee -a $REPORT
     cd /workspace/cp2k
-    git fetch origin "${GIT_BRANCH}"         |& tee -a $REPORT
-    git checkout "${GIT_REF}"                |& tee -a $REPORT
-    git submodule update --init --recursive  |& tee -a $REPORT
+    git fetch origin "${GIT_BRANCH}"                       |& tee -a $REPORT
+    git -c advice.detachedHead=false checkout "${GIT_REF}" |& tee -a $REPORT
+    git submodule update --init --recursive                |& tee -a $REPORT
     git --no-pager log -1 --pretty='%nCommitSHA: %H%nCommitTime: %ci%nCommitAuthor: %an%nCommitSubject: %s%n' |& tee -a $REPORT
 
 elif [ -d  /mnt/cp2k ]; then
