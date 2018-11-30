@@ -87,6 +87,13 @@ else
   ACC = 1
 endif
 
+ifeq (,$(strip $(MKLROOT)))
+  MKL_INCFILE = $(lastword $(sort $(wildcard /opt/intel/compilers_and_libraries_*/linux/mkl/include/mkl.h)))
+  ifneq (,$(strip $(MKL_INCFILE)))
+    MKLROOT = $(abspath $(dir $(MKL_INCFILE))/..)
+  endif
+endif
+
 SCALAPACK ?= 1
 ifneq (0,$(MPI))
   ifeq (0,$(GNU))
@@ -582,8 +589,8 @@ ifneq (0,$(MKL))
         -Wl,--end-group
     endif
   endif
-  LIBS += -Wl,--as-needed -lpthread -lm -Wl,--no-as-needed
-  MIC_LDFLAGS += -qoffload-option,mic,ld,"-lpthread -lm"
+  LIBS += -Wl,--as-needed -lpthread -lm -ldl -Wl,--no-as-needed
+  MIC_LDFLAGS += -qoffload-option,mic,ld,"-lpthread -lm -ldl"
 endif
 
 ifneq (,$(wildcard $(SRCDIR)/dbcsr/libsmm_acc/libxsmm_acc))
