@@ -263,9 +263,11 @@ endif
 
 SYM ?= $(DBG)
 ifneq (0,$(SYM))
-  DFLAGS += -D__USE_CP2K_TRACE
-  OPTFLAGS += -traceback
   LDFLAGS += -Wl,--export-dynamic
+  ifeq (0,$(GNU))
+    DFLAGS += -D__USE_CP2K_TRACE
+    OPTFLAGS += -traceback
+  endif
   ifneq (1,$(SYM))
     CXXFLAGS := -ggdb3 $(CXXFLAGS)
     CFLAGS := -ggdb3 $(CFLAGS)
