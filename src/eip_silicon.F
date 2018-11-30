@@ -1179,7 +1179,7 @@ CONTAINS
 !$OMP END PARALLEL
 
            IF (indlstx.ge.myspaceout) THEN
-              WRITE(10,*) count,'NNBRX too  small', nnbrx
+              WRITE(10,*) count,'NNBRX too small', nnbrx
               DEALLOCATE(lstb,rel)
               nnbrx=3*nnbrx/2
               CYCLE loop_nnbrx
