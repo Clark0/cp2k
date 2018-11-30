@@ -617,7 +617,8 @@ CONTAINS
             rab(1) = dist_ab(1, itask)
             rab(2) = dist_ab(2, itask)
             rab(3) = dist_ab(3, itask)
-            rab2 = rab(1)*rab(1)+rab(2)*rab(2)+rab(3)*rab(3)
+            rab2 = PRODUCT(rab)
+            rab2 = rab2 * rab2
             rb(1) = ra(1)+rab(1)
             rb(2) = ra(2)+rab(2)
             rb(3) = ra(3)+rab(3)
