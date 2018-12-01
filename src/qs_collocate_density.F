@@ -3642,7 +3642,7 @@ CONTAINS
 
       INTEGER                                            :: i, index_max(3), index_min(3), &
                                                             ipoint(3), j, k
-      REAL(KIND=dp)                                      :: inv_ng(3), primpt
+      REAL(KIND=dp)                                      :: inv_ng(3), point(3), primpt
 
 ! still hard-wired (see MODULO)
 
@@ -3656,8 +3656,10 @@ CONTAINS
          DO k = index_min(3), index_max(3)
          DO j = index_min(2), index_max(2)
          DO i = index_min(1), index_max(1)
-            ! primitive_value of point in real space
-            primpt = primitive_value(MATMUL(cell%hmat, REAL((/i, j, k/), KIND=dp)*inv_ng))
+            ! point in real space
+            point = MATMUL(cell%hmat, REAL((/i, j, k/), KIND=dp)*inv_ng)
+            ! primitive_value of point
+            primpt = primitive_value(point)
             ! skip if outside of the sphere
             IF (SUM((point-rp)**2) > radius**2) CYCLE
             ! point on the grid (including pbc)
