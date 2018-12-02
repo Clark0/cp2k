@@ -50,7 +50,7 @@ ifeq (0,$(GNU))
   IPO ?= 0
 else # GNU
   RECONFIGURE ?= 0
-  IPO ?= 1
+  IPO ?= 0
 endif
 
 # CP2K's configuration namespace (prefix)
