@@ -214,6 +214,7 @@ ifeq (0,$(GNU)) # Intel
   DFLAGS += -D__INTEL -D__F2008
   MKL_OMPRTL = intel
   MKL_FCRTL = intel
+  RANLIB = xiar -s
   AR = xiar -r
 else # GNU GCC
   ifeq (,$(MKLROOT))
@@ -259,6 +260,7 @@ else # GNU GCC
   MKL_OMPRTL = gnu
   MKL_FCRTL = gf
   INTEL ?= 0
+  RANLIB = gcc-ranlib
   AR = gcc-ar -r
 endif
 
