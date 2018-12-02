@@ -3650,7 +3650,7 @@ CONTAINS
 
          CALL return_cube_nonortho(cube_info, radius, index_min, index_max, rp)
 
-         inv_ng = 1.0_dp / ng
+         inv_ng = 1.0_dp/ng
 
          ! go over the grid, but cycle if the point is not within the radius
          DO k = index_min(3), index_max(3)
@@ -3683,9 +3683,10 @@ CONTAINS
 !> \return ...
 ! **************************************************************************************************
       FUNCTION primitive_value(point) RESULT(res)
-      REAL(KIND=dp) :: point(3), res
+      REAL(KIND=dp)                                      :: point(3), res
 
-      REAL(KIND=dp) :: dra(3), drap(3), drb(3), drbp(3), myexp, pdrap
+      REAL(KIND=dp)                                      :: dra(3), drap(3), drb(3), drbp(3), myexp, &
+                                                            pdrap
 
          res = 0.0_dp
          myexp = EXP(-zetp*SUM((point-rp)**2))*prefactor
