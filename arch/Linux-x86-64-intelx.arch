@@ -13,15 +13,15 @@ CPP  = #cpp
 ifneq (0,$(LIBXSMM))
   ifeq (,$(strip $(LIBXSMMROOT)))
     ifneq (,$(wildcard $(CP2KHOME)/../libxsmm/Makefile))
-      LIBXSMMROOT = $(CP2KHOME)/../libxsmm
+      LIBXSMMROOT = $(abspath $(CP2KHOME)/../libxsmm)
     else ifneq (,$(wildcard $(CP2KHOME)/../libxsmm-master/Makefile))
-      LIBXSMMROOT = $(CP2KHOME)/../libxsmm
+      LIBXSMMROOT = $(abspath $(CP2KHOME)/../libxsmm-master)
     else ifneq (,$(wildcard $(HOME)/libxsmm/Makefile))
-      LIBXSMMROOT = $(HOME)/libxsmm
+      LIBXSMMROOT = $(abspath $(HOME)/libxsmm)
     else ifneq (,$(wildcard $(HOME)/libxsmm-master/Makefile))
-      LIBXSMMROOT = $(HOME)/libxsmm
+      LIBXSMMROOT = $(abspath $(HOME)/libxsmm-master)
     else ifneq (,$(wildcard $(TOOLSRC)/toolchain/build/libxsmm*/Makefile))
-      LIBXSMMROOT = $(dir $(wildcard $(TOOLSRC)/toolchain/build/libxsmm*/Makefile))
+      LIBXSMMROOT = $(abspath $(dir $(lastword $(sort $(wildcard $(TOOLSRC)/toolchain/build/libxsmm*/Makefile)))))
     endif
   endif
 endif
@@ -420,13 +420,12 @@ LIBDIRNAME = lib
 OBJDIRNAME = obj
 
 ifneq (,$(LIBXSMMROOT))
-  # 1: Small Multiplications, 2: 1+Transposes, 3: 2+All GEMMs
+  # 1: SMMs, 2: 1+UnreleasedFeat, 3: 2+AllGEMM
   #
-  LIBXSMM ?= 2
+  LIBXSMM ?= 1
   ifneq (0,$(LIBXSMM))
     $(info ================================================================================)
-    $(info Automatically enabled LIBXSMM $(shell $(LIBXSMMROOT)/scripts/libxsmm_utilities.py 2> /dev/null))
-    $(info LIBXSMMROOT=$(LIBXSMMROOT))
+    $(info Automatically enabled LIBXSMM (LIBXSMMROOT=$(LIBXSMMROOT)))
     $(info ================================================================================)
     DFLAGS += -D__LIBXSMM=$(LIBXSMM)
     # adjust CP2K configuration
@@ -448,6 +447,7 @@ ifneq (,$(LIBXSMMROOT))
     endif
     # enable additional use cases for LIBXSMM
     ifeq (1,$(shell echo $$((1 < $(LIBXSMM)))))
+      BIGVERNUM = echo "99" > version.txt
       # substitute all GEMM calls with LIBXSMM
       ifeq (1,$(shell echo $$((2 < $(LIBXSMM)))))
         WRAP ?= 1
@@ -460,6 +460,7 @@ ifneq (,$(LIBXSMMROOT))
         WRAP ?= 0
       endif
     else
+      BIGVERNUM = rm -f version.txt
       WRAP ?= 0
     endif
     JIT ?= 1
@@ -472,7 +473,7 @@ ifneq (,$(LIBXSMMROOT))
         LIBXSMM_MPSS := 1
       endif
     endif
-    LIBXSMM_UPTODATE_CHECK := $(shell $(MAKE) --no-print-directory -f $(LIBXSMMROOT)/Makefile \
+    LIBXSMM_UPTODATE_CHECK := $(shell $(BIGVERNUM) && $(MAKE) --no-print-directory -f $(LIBXSMMROOT)/Makefile \
       INCDIR=$(CP2KHOME)/$(LIBDIRNAME)/$(ARCH)/$(ONEVERSION)/libxsmm/include \
       BLDDIR=$(CP2KHOME)/$(OBJDIRNAME)/$(ARCH)/$(ONEVERSION)/libxsmm/build \
       BINDIR=$(CP2KHOME)/$(LIBDIRNAME)/$(ARCH)/$(ONEVERSION)/libxsmm/bin \
