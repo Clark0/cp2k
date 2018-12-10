@@ -39,8 +39,8 @@ SSE ?= 0
 AVX ?= 0
 MPI ?= 1
 OMP ?= 1
-SYM ?= 0
 DBG ?= 0
+SYM ?= $(DBG)
 MKL_DIRECT ?= 0
 MKL_STATIC ?= 1
 ELPA ?= 201705
@@ -416,6 +416,9 @@ ifneq (,$(wildcard $(LIBSMM_LIB))) # LIBSMM successfully downloaded
   LIBS += $(LIBSMM_LIB)
 endif
 
+LIBDIRNAME = lib
+OBJDIRNAME = obj
+
 ifneq (,$(LIBXSMMROOT))
   # 1: Small Multiplications, 2: 1+Transposes, 3: 2+All GEMMs
   #
@@ -429,11 +432,11 @@ ifneq (,$(LIBXSMMROOT))
     # adjust CP2K configuration
     DFLAGS += -D__HAS_smm_vec
 
-    LIBXSMM_LIB = $(MAINLIBDIR)/$(ARCH)/$(ONEVERSION)/libxsmm/lib/libxsmm.a
+    LIBXSMM_LIB = $(CP2KHOME)/$(LIBDIRNAME)/$(ARCH)/$(ONEVERSION)/libxsmm/lib/libxsmm.a
     # always attempt to link libxsmmext (needed at least in case of WRAP)
-    LIBS += $(MAINLIBDIR)/$(ARCH)/$(ONEVERSION)/libxsmm/lib/libxsmmext.a
-    LIBS += $(LIBXSMM_LIB) $(MAINLIBDIR)/$(ARCH)/$(ONEVERSION)/libxsmm/lib/libxsmmf.a
-    IFLAGS += -I$(MAINOBJDIR)/$(ARCH)/$(ONEVERSION)/libxsmm/include
+    LIBS += $(CP2KHOME)/$(LIBDIRNAME)/$(ARCH)/$(ONEVERSION)/libxsmm/lib/libxsmmext.a
+    LIBS += $(LIBXSMM_LIB) $(CP2KHOME)/$(LIBDIRNAME)/$(ARCH)/$(ONEVERSION)/libxsmm/lib/libxsmmf.a
+    IFLAGS += -I$(CP2KHOME)/$(LIBDIRNAME)/$(ARCH)/$(ONEVERSION)/libxsmm/include
 
     # account for OpenMP-enabled libxsmmext routines
     ifeq (0,$(OMP))
@@ -471,10 +474,10 @@ ifneq (,$(LIBXSMMROOT))
       endif
     endif
     LIBXSMM_UPTODATE_CHECK := $(shell $(MAKE) --no-print-directory -f $(LIBXSMMROOT)/Makefile \
-      INCDIR=$(MAINOBJDIR)/$(ARCH)/$(ONEVERSION)/libxsmm/include \
-      BLDDIR=$(MAINOBJDIR)/$(ARCH)/$(ONEVERSION)/libxsmm/build \
-      BINDIR=$(MAINOBJDIR)/$(ARCH)/$(ONEVERSION)/libxsmm/bin \
-      OUTDIR=$(MAINLIBDIR)/$(ARCH)/$(ONEVERSION)/libxsmm/lib \
+      INCDIR=$(CP2KHOME)/$(LIBDIRNAME)/$(ARCH)/$(ONEVERSION)/libxsmm/include \
+      BLDDIR=$(CP2KHOME)/$(OBJDIRNAME)/$(ARCH)/$(ONEVERSION)/libxsmm/build \
+      BINDIR=$(CP2KHOME)/$(LIBDIRNAME)/$(ARCH)/$(ONEVERSION)/libxsmm/bin \
+      OUTDIR=$(CP2KHOME)/$(LIBDIRNAME)/$(ARCH)/$(ONEVERSION)/libxsmm/lib \
       INIT=0 WRAP=$(WRAP) GEMM=$(GEMM) JIT=$(JIT) SYM=$(SYM) DBG=$(DBG) \
       MNK=$(LIBXSMM_MNK) M=$(LIBXSMM_M) N=$(LIBXSMM_N) K=$(LIBXSMM_K) PRECISION=2 \
       OPT=$(OPT) IPO=$(IPO) TARGET="$(TARGET)" SSE=$(SSE) AVX=$(AVX) MIC=$(MIC) \
@@ -522,14 +525,14 @@ endif
 
 ifneq (,$(LIBXSTREAMROOT))
   LIBXSTREAM_BUILD := $(shell $(MAKE) -f $(LIBXSTREAMROOT)/Makefile \
-    BLDDIR=$(MAINOBJDIR)/$(ARCH)/$(ONEVERSION)/libxstream \
-    OUTDIR=$(MAINLIBDIR)/$(ARCH)/$(ONEVERSION)/libxstream \
+    BLDDIR=$(CP2KHOME)/$(OBJDIRNAME)/$(ARCH)/$(ONEVERSION)/libxstream \
+    OUTDIR=$(CP2KHOME)/$(LIBDIRNAME)/$(ARCH)/$(ONEVERSION)/libxstream \
     SYM=$(SYM) DBG=$(DBG) IPO=$(IPO) \
     OFFLOAD=$(OFFLOAD) MIC=$(MIC) \
   >&2)
   DFLAGS += -D__LIBXSTREAM
   IFLAGS += -I$(LIBXSTREAMROOT)/include
-  LIBS   += $(MAINLIBDIR)/$(ARCH)/$(ONEVERSION)/libxstream/libxstream.a
+  LIBS   += $(CP2KHOME)/$(LIBDIRNAME)/$(ARCH)/$(ONEVERSION)/libxstream/libxstream.a
 endif
 
 ifeq (1,$(MKL_DIRECT))
