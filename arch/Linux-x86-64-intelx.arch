@@ -448,7 +448,6 @@ ifneq (,$(LIBXSMMROOT))
     endif
     # enable additional use cases for LIBXSMM
     ifeq (1,$(shell echo $$((1 < $(LIBXSMM)))))
-      DFLAGS += -D__LIBXSMM_TRANS
       # substitute all GEMM calls with LIBXSMM
       ifeq (1,$(shell echo $$((2 < $(LIBXSMM)))))
         WRAP ?= 1
