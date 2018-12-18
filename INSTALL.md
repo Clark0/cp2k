@@ -1,15 +1,36 @@
 # How to compile the CP2K code
 
-##  1. Acquire the code:
+##  1. Acquire the code
 
-See  https://www.cp2k.org/download
 
-For users, the preferred method is to download a release.
-For developers, the preferred method is to download it from Git.
+For users, the preferred method is to [download a release](https://github.com/cp2k/cp2k/releases/).
+For developers, the preferred method is to [download from Git](./README.md#downloading-cp2k-source-code).
 
-## 2. Install Prerequisites
+For more details on downloading CP2K, see  https://www.cp2k.org/download.
 
-Sub-points here discuss prerequisites needed to build CP2K. Most of these can be conveniently installed via the [toolchain script](./tools/toolchain). Copies of the recommended versions of 3rd party software can be downloaded from https://www.cp2k.org/static/downloads/.
+## 2. Install prerequisites
+
+The most convenient way to install pre-requisites is by using the [toolchain script](./tools/toolchain/install_cp2k_toolchain.sh).
+
+For a complete introduction to the toolchain script, see the [README for users](./tools/toolchain/README_FOR_USERS.md) or the [README for developers](./tools/toolchain/README_FOR_DEVELOPERS.md).
+
+The basic steps are:
+
+- Read toolchain installation options:
+```console
+> cd tools/toolchain/
+> ./install_cp2k_toolchain.sh --help
+```
+
+- Launch toolchain script (example option choice)
+```console
+> ./install_cp2k_toolchain.sh --with-libxsmm=install --with-openblas=system --with-fftw=system --with-reflapack=no \
+  --enable-cuda --enable-omp
+```
+
+- Once the script has completed successfully, follow the instructions given at the end of its output.
+
+Sub-points here discuss prerequisites needed to build CP2K. Copies of the recommended versions of 3rd party software can be downloaded from https://www.cp2k.org/static/downloads/.
 
 ### 2a. GNU make (required, build system)
 
@@ -174,7 +195,7 @@ Conventionally, there are six versions:
 | sdbg    | serial                  | single core testing and debugging  |
 | sopt    | serial                  | general single core usage          |
 | ssmp    | parallel (only OpenMP)  | optimized, single node, multi core |
-| pdbg    | parallel (only MPI)     | multinode testing and debugging    |
+| pdbg    | parallel (only MPI)     | multi-node testing and debugging   |
 | popt    | parallel (only MPI)     | general usage, no threads          |
 | psmp    | parallel (MPI + OpenMP) | general usage, threading might improve scalability and memory usage |
 
