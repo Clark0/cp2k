@@ -4,7 +4,7 @@ SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_NAME")" && pwd -P)"
 
 # +-----------------------------------------------------------------------+
 # |  CP2K: A general program to perform molecular dynamics simulations    |
-# |  Copyright (C) 2000 - 2018  CP2K developers group                     |
+# |  Copyright (C) 2000 - 2019  CP2K developers group                     |
 # +-----------------------------------------------------------------------+
 #
 # *****************************************************************************
@@ -723,11 +723,16 @@ else
         exit 1
     fi
 fi
+
 # ParMETIS requires cmake, it also installs METIS if it is chosen
-# __INSTALL__ option
 if [ "$with_parmetis" = "__INSTALL__" ] ; then
     [ "$with_cmake" = "__DONTUSE__" ] && with_cmake="__INSTALL__"
     with_metis="__INSTALL__"
+fi
+
+# spg library requires cmake.
+if [ "$with_spglib" = "__INSTALL__" ] ; then
+    [ "$with_cmake" = "__DONTUSE__" ] && with_cmake="__INSTALL__"
 fi
 
 # SIRIUS dependencies. Remove the gsl library from the dependencies if SIRIUS is not activated
@@ -1026,7 +1031,7 @@ NOOPT_FLAGS="-O1"
 
 # those flags that do not influence code generation are used always, the others if debug
 FCDEB_FLAGS="-ffree-form -std=f2003 -fimplicit-none"
-FCDEB_FLAGS_DEBUG="-fsanitize=leak -fcheck=bounds,do,recursion,pointer -ffpe-trap=invalid,zero,overflow -finit-real=snan -fno-fast-math -Werror=realloc-lhs-all -finline-matmul-limit=0"
+FCDEB_FLAGS_DEBUG="-fsanitize=leak -fcheck=all -ffpe-trap=invalid,zero,overflow -finit-derived -finit-real=snan -finit-integer=-42 -fno-fast-math -Werror=realloc-lhs-all -finline-matmul-limit=0"
 
 # code coverage generation flags
 COVERAGE_FLAGS="-O1 -coverage -fkeep-static-functions"
