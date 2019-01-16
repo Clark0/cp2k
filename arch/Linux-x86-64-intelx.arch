@@ -55,7 +55,7 @@ ifeq (0,$(GNU))
   IPO ?= 0
 else # GNU
   RECONFIGURE ?= 0
-  IPO ?= 0
+  IPO ?= 1
 endif
 
 # CP2K's configuration namespace (prefix)
@@ -487,10 +487,10 @@ ifneq (,$(LIBXSMMROOT))
       BLDDIR=$(CP2KHOME)/$(OBJDIRNAME)/$(ARCH)/$(ONEVERSION)/libxsmm/build \
       BINDIR=$(CP2KHOME)/$(LIBDIRNAME)/$(ARCH)/$(ONEVERSION)/libxsmm/bin \
       OUTDIR=$(CP2KHOME)/$(LIBDIRNAME)/$(ARCH)/$(ONEVERSION)/libxsmm/lib \
-      INIT=0 WRAP=$(WRAP) GEMM=$(GEMM) JIT=$(JIT) SYM=$(SYM) DBG=$(DBG) \
+      CXX=$(CXX) CC=$(CC) FC=$(FC) AR=$(AR) JIT=$(JIT) SYM=$(SYM) DBG=$(DBG) \
       MNK=$(LIBXSMM_MNK) M=$(LIBXSMM_M) N=$(LIBXSMM_N) K=$(LIBXSMM_K) PRECISION=2 \
       OPT=$(OPT) IPO=$(IPO) TARGET="$(TARGET)" SSE=$(SSE) AVX=$(AVX) MIC=$(MIC) \
-      MPSS=$(LIBXSMM_MPSS) OFFLOAD=$(OFFLOAD) >&2)
+      INIT=0 WRAP=$(WRAP) GEMM=$(GEMM) MPSS=$(LIBXSMM_MPSS) OFFLOAD=$(OFFLOAD) >&2)
   endif
 endif
 
