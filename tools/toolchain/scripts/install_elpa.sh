@@ -2,7 +2,7 @@
 [ "${BASH_SOURCE[0]}" ] && SCRIPT_NAME="${BASH_SOURCE[0]}" || SCRIPT_NAME=$0
 SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_NAME")" && pwd -P)"
 
-elpa_ver=${elpa_ver:-2017.05.002}
+elpa_ver=${elpa_ver:-2017.05.003}
 source "${SCRIPT_DIR}"/common_vars.sh
 source "${SCRIPT_DIR}"/tool_kit.sh
 source "${SCRIPT_DIR}"/signal_trap.sh
@@ -41,7 +41,7 @@ case "$with_elpa" in
                 echo "elpa-${elpa_ver}.tar.gz is found"
             else
                 download_pkg ${DOWNLOADER_FLAGS} \
-                             https://www.cp2k.org/static/downloads/elpa-${elpa_ver}.tar.gz
+                             https://elpa.mpcdf.mpg.de/html/Releases/${elpa_ver}/elpa-${elpa_ver}.tar.gz
             fi
             [ -d elpa-${elpa_ver} ] && rm -rf elpa-${elpa_ver}
             echo "Installing from scratch into ${pkg_install_dir}"
@@ -56,13 +56,6 @@ case "$with_elpa" in
             # elpa expect FC to be an mpi fortran compiler that is happy
             # with long lines, and that a bunch of libs can be found
             cd elpa-${elpa_ver}
-            # shared libraries cannot be built if linked with
-            # reflapack (the case when valgrind is enabled)
-            if [ "$ENABLE_VALGRIND" = "__TRUE__" ] ; then
-                shared_flag=no
-            else
-                shared_flag=yes
-            fi
             # specific settings needed on CRAY Linux Environment
             if [ "$ENABLE_CRAY" = "__TRUE__" ] ; then
                 # extra LDFLAGS needed
@@ -79,7 +72,7 @@ case "$with_elpa" in
             ../configure  --prefix="${pkg_install_dir}" \
                           --libdir="${pkg_install_dir}/lib" \
                           --enable-openmp=no \
-                          --enable-shared=$shared_flag \
+                          --enable-shared=no \
                           --enable-static=yes \
                           --disable-option-checking \
                           --enable-avx=${has_AVX} \
@@ -92,7 +85,7 @@ case "$with_elpa" in
                           CFLAGS="${CFLAGS} ${MATH_CFLAGS} ${SCALAPACK_CFLAGS}" \
                           CXXFLAGS="${CXXFLAGS} ${MATH_CFLAGS} ${SCALAPACK_CFLAGS}" \
                           LDFLAGS="-Wl,--enable-new-dtags ${MATH_LDFLAGS} ${SCALAPACK_LDFLAGS} ${cray_ldflags}" \
-                          LIBS="${SCALAPACK_LIBS} ${MATH_LIBS}" \
+                          LIBS="${SCALAPACK_LIBS} $(resolve_string "${MATH_LIBS}")" \
                           > configure.log 2>&1
             make -j $NPROCS >  make.log 2>&1
             make install > install.log 2>&1
@@ -103,7 +96,7 @@ case "$with_elpa" in
                 ../configure  --prefix="${pkg_install_dir}" \
                               --libdir="${pkg_install_dir}/lib" \
                               --enable-openmp=yes \
-                              --enable-shared=$shared_flag \
+                              --enable-shared=no \
                               --enable-static=yes \
                               --disable-option-checking \
                               --enable-avx=${has_AVX} \
@@ -116,7 +109,7 @@ case "$with_elpa" in
                               CFLAGS="${CFLAGS} ${MATH_CFLAGS} ${SCALAPACK_CFLAGS}" \
                               CXXFLAGS="${CXXFLAGS} ${MATH_CFLAGS} ${SCALAPACK_CFLAGS}" \
                               LDFLAGS="-Wl,--enable-new-dtags ${MATH_LDFLAGS} ${SCALAPACK_LDFLAGS} ${cray_ldflags}" \
-                              LIBS="${SCALAPACK_LIBS} ${MATH_LIBS}" \
+                              LIBS="${SCALAPACK_LIBS} $(resolve_string "${MATH_LIBS}" OMP)" \
                               > configure.log 2>&1
                 make -j $NPROCS >  make.log 2>&1
                 make install > install.log 2>&1

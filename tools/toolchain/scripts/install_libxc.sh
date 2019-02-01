@@ -2,7 +2,7 @@
 [ "${BASH_SOURCE[0]}" ] && SCRIPT_NAME="${BASH_SOURCE[0]}" || SCRIPT_NAME=$0
 SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_NAME")" && pwd -P)"
 
-libxc_ver=${libxc_ver:-4.2.3}
+libxc_ver=${libxc_ver:-4.3.0}
 source "${SCRIPT_DIR}"/common_vars.sh
 source "${SCRIPT_DIR}"/tool_kit.sh
 source "${SCRIPT_DIR}"/signal_trap.sh
@@ -28,7 +28,7 @@ case "$with_libxc" in
                 echo "libxc-${libxc_ver}.tar.gz is found"
             else
                 download_pkg ${DOWNLOADER_FLAGS} \
-                             https://www.cp2k.org/static/downloads/libxc-${libxc_ver}.tar.gz
+                             https://tddft.org/programs/octopus/download/libxc/${libxc_ver}/libxc-${libxc_ver}.tar.gz
             fi
             echo "Installing from scratch into ${pkg_install_dir}"
             [ -d libxc-${libxc_ver} ] && rm -rf libxc-${libxc_ver}
@@ -39,6 +39,10 @@ case "$with_libxc" in
                 configure
             # patch for libxc 3.0.0 + gcc 6.4.0 (undefined behavior in lda_x.c)
             CFLAGS=`echo ${CFLAGS} |sed 's|-fno-omit-frame-pointer ||g'`
+
+            # patch for libxc 4.3.0 (undefined symbols due to function removal)
+            patch -p1 < "${SCRIPT_DIR}/files/libxc-4.3.0-fix-fortran-iface.patch"
+
             ./configure  --prefix="${pkg_install_dir}" --libdir="${pkg_install_dir}/lib" > configure.log 2>&1
             make -j $NPROCS > make.log 2>&1
             make install > install.log 2>&1
