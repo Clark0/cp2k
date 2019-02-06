@@ -607,6 +607,9 @@ ifneq (0,$(MKL))
   MIC_LDFLAGS += -qoffload-option,mic,ld,"-lpthread -lm -ldl"
 endif
 
+ifneq (,$(wildcard $(CP2KHOME)/$(EXTSDIR)/dbcsr))
+  IFLAGS += -I$(CP2KHOME)/$(OBJDIRNAME)/$(ARCH)/$(ONEVERSION)/exts/dbcsr
+endif
 ifneq (,$(wildcard $(SRCDIR)/dbcsr/libsmm_acc/libxsmm_acc))
   ifeq (,$(LIBXSMMROOT))
     ifeq (,$(LIBXSTREAMROOT))
