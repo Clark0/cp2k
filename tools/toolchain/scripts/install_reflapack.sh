@@ -21,7 +21,7 @@ case "$with_reflapack" in
         echo "==================== Installing LAPACK ===================="
         pkg_install_dir="${INSTALLDIR}/lapack-${reflapack_ver}"
         install_lock_file="$pkg_install_dir/install_successful"
-        if [[ $install_lock_file -nt $SCRIPT_NAME ]]; then
+        if verify_checksums "${install_lock_file}" ; then
             echo "lapack-${reflapack_ver} is already installed, skipping it."
         else
             if [ -f lapack-${reflapack_ver}.tgz ] ; then
@@ -37,14 +37,14 @@ case "$with_reflapack" in
             cat <<EOF > make.inc
 SHELL    = /bin/sh
 FORTRAN  = $FC
-OPTS     = $FFLAGS -frecursive -fno-fast-math
-DRVOPTS  = $FFLAGS -frecursive -fno-fast-math
-NOOPT    = $FFLAGS -O0 -frecursive -fno-fast-math
+OPTS     = $FFLAGS -frecursive
+DRVOPTS  = $FFLAGS -frecursive
+NOOPT    = $FFLAGS -O0 -frecursive
 LOADER   = $FC
-LOADOPTS = $FFLAGS -Wl,--enable-new-dtags -fno-fast-math
+LOADOPTS = $FFLAGS -Wl,--enable-new-dtags
 TIMER    = INT_ETIME
 CC       = $CC
-CFLAGS   = $CFLAGS -fno-fast-math
+CFLAGS   = $CFLAGS
 ARCH     = ar
 ARCHFLAGS= cr
 RANLIB   = ranlib
@@ -63,7 +63,7 @@ EOF
             ! [ -d "${pkg_install_dir}/lib" ] && mkdir -p "${pkg_install_dir}/lib"
             cp libblas.a liblapack.a "${pkg_install_dir}/lib"
             cd ..
-            touch "${install_lock_file}"
+            write_checksums "${install_lock_file}" "${SCRIPT_DIR}/$(basename ${SCRIPT_NAME})"
         fi
         REFLAPACK_LDFLAGS="-L'${pkg_install_dir}/lib' -Wl,-rpath='${pkg_install_dir}/lib'"
         ;;
