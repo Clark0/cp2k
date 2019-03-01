@@ -1856,7 +1856,7 @@ CONTAINS
             CALL calculate_embed_pot_grad(force_env%sub_force_env(ref_subsys_number)%force_env%qs_env, &
                                           diff_rho_r, diff_rho_spin, opt_embed)
          ! Take the embedding step
-         CALL opt_embed_step(diff_rho_r, diff_rho_spin, opt_embed, embed_pot, spin_embed_pot, &
+         CALL opt_embed_step(diff_rho_r, diff_rho_spin, opt_embed, embed_pot, spin_embed_pot, rho_r_ref, &
                              force_env%sub_force_env(ref_subsys_number)%force_env%qs_env)
 
       ENDDO ! i_iter

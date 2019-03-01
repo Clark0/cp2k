@@ -9,7 +9,7 @@ source "${SCRIPT_DIR}"/signal_trap.sh
 
 with_json_fortran=${1:-__INSTALL__}
 
-[ -f "${BUILDDIR}/setup_json_fortran" ] && rm -f "${BUILDDIR}/setup_json_fortram"
+[ -f "${BUILDDIR}/setup_json_fortran" ] && rm -f "${BUILDDIR}/setup_json_fortran"
 
 ! [ -d "${BUILDDIR}" ] && mkdir -p "${BUILDDIR}"
 cd "${BUILDDIR}"
@@ -18,7 +18,7 @@ case "$with_json_fortran" in
         echo "==================== Installing json_fortran ===================="
         pkg_install_dir="${INSTALLDIR}/json_fortran-${json_fortran_ver}"
         install_lock_file="$pkg_install_dir/install_successful"
-        if [ -f "${install_lock_file}" ] ; then
+        if verify_checksums "${install_lock_file}" ; then
             echo "json-fortran-${json_fortran_ver} is already installed, skipping it."
         else
             if [ -f json-fortran-${json_fortran_ver}.tar.gz ] ; then
@@ -29,7 +29,7 @@ case "$with_json_fortran" in
                              -o json-fortran-${json_fortran_ver}.tar.gz
             fi
             echo "Installing from scratch into ${pkg_install_dir}"
-            [ -d json-fortran-${json_fortran_ver} ] && rm -rf josn-fortran-${json_fortran_ver}
+            [ -d json-fortran-${json_fortran_ver} ] && rm -rf json-fortran-${json_fortran_ver}
             tar -xzf json-fortran-${json_fortran_ver}.tar.gz
             cd json-fortran-${json_fortran_ver}
             mkdir build
