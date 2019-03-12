@@ -984,7 +984,9 @@ CONTAINS
 !> \param nspins ...
 ! **************************************************************************************************
    SUBROUTINE gaVxcgb_noGC(vxc_h, vxc_s, qs_kind, rho_atom, nspins)
-
+#if defined(__LIBXSMM)
+      USE libxsmm, ONLY: dgemm => libxsmm_dgemm
+#endif
       REAL(dp), DIMENSION(:, :, :), POINTER              :: vxc_h, vxc_s
       TYPE(qs_kind_type), INTENT(IN)                     :: qs_kind
       TYPE(rho_atom_type), POINTER                       :: rho_atom
