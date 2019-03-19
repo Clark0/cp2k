@@ -50,8 +50,10 @@ MKL_DIRECT ?= 0
 MKL_STATIC ?= 1
 ELPA ?= 201705
 
+ifneq (,$(LIBXSMM))
 ifeq (1,$(shell echo $$((2 < $(LIBXSMM)))))
   IPO ?= 0
+endif
 endif
 ifeq (0,$(GNU))
   RECONFIGURE ?= 1
