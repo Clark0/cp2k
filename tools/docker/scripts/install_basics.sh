@@ -6,15 +6,15 @@
 apt-get update
 apt-get install -y --no-install-recommends \
     ca-certificates                        \
-    python                                 \
+    cmake                                  \
     git                                    \
-    nano                                   \
-    wget                                   \
-    unzip                                  \
     less                                   \
     make                                   \
-    cmake                                  \
-    rsync
+    nano                                   \
+    python                                 \
+    rsync                                  \
+    unzip                                  \
+    wget
 rm -rf /var/lib/apt/lists/*
 
 # clone cp2k repository
