@@ -7,7 +7,7 @@
 !> \brief builds the global input section for cp2k
 !> \par History
 !>      06.2004 created [fawzi]
-!>      03.2014 moved to seperate file [Ole Schuett]
+!>      03.2014 moved to separate file [Ole Schuett]
 !>      10.2016 update seed input [Matthias Krack]
 !> \author fawzi
 ! **************************************************************************************************
@@ -99,7 +99,7 @@ CONTAINS
 
       CALL keyword_create(keyword, name="BLACS_REPEATABLE", &
                           description="Use a topology for BLACS collectives that is guaranteed to be repeatable "// &
-                          "on homegeneous architectures", &
+                          "on homogeneous architectures", &
                           usage="BLACS_REPEATABLE", &
                           default_l_val=.FALSE., lone_keyword_l_val=.TRUE.)
       CALL section_add_keyword(section, keyword)
@@ -107,7 +107,7 @@ CONTAINS
 
       CALL keyword_create( &
          keyword, name="PREFERRED_DIAG_LIBRARY", &
-         description="Specifies the DIAGONALIZATION library to be used. If not availabe, the standard scalapack is used", &
+         description="Specifies the DIAGONALIZATION library to be used. If not available, the standard scalapack is used", &
          usage="PREFERRED_DIAG_LIBRARY ELPA", &
          default_i_val=do_diag_sl, &
          enum_i_vals=(/do_diag_sl, do_diag_sl2, do_diag_elpa/), &
@@ -178,7 +178,7 @@ CONTAINS
                        "will be used in case a FFT library is specified and not available.", &
                        "a fast portable FFT library. Recommended."// &
                        "See also the FFTW_PLAN_TYPE, and FFTW_WISDOM_FILE_NAME keywords.", &
-                       "Same as FFTW3 (for compatability with CP2K 2.3)"))
+                       "Same as FFTW3 (for compatibility with CP2K 2.3)"))
       CALL section_add_keyword(section, keyword)
       CALL keyword_release(keyword)
 
@@ -411,7 +411,7 @@ CONTAINS
       CALL keyword_release(keyword)
 
       CALL keyword_create(keyword, name="CALLGRAPH_FILE_NAME", &
-                          description="Name of the callgraph file, which is writte a the end of the run. "// &
+                          description="Name of the callgraph file, which is written at the end of the run. "// &
                           "If not specified the project name will be used as filename.", &
                           usage="CALLGRAPH_FILE_NAME {filename}", default_lc_val="")
       CALL section_add_keyword(section, keyword)
@@ -603,7 +603,7 @@ CONTAINS
                           description="Allows to switch between scalapack pdgemm and dbcsr_multiply. "// &
                           "On normal systems pdgemm is recommended on system with GPU "// &
                           "is optimized and can give better performance. NOTE: if DBCSR is employed "// &
-                          "FORCE_BLOCK_SIZE should be set. The perfomance on GPU's dependes "// &
+                          "FORCE_BLOCK_SIZE should be set. The performance on GPU's depends "// &
                           "crucially on the BLOCK_SIZES. Make sure optimized kernels are available.", &
                           usage="TYPE_OF_MATRIX_MULTIPLICATION ELPA", &
                           default_i_val=do_pdgemm, &
