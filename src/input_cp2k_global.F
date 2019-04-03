@@ -70,10 +70,13 @@ CONTAINS
 !> \author fawzi
 ! **************************************************************************************************
    SUBROUTINE create_global_section(section)
+#if defined(__LIBXSMM)
+      USE libxsmm, ONLY: libxsmm_get_target_archid, LIBXSMM_X86_SSE4, LIBXSMM_X86_AVX512
+#endif
       TYPE(section_type), POINTER                        :: section
 
       CHARACTER(len=*), PARAMETER :: routineN = 'create_global_section', &
-         routineP = moduleN//':'//routineN
+                                     routineP = moduleN//':'//routineN
 
       INTEGER                                            :: default_i_val, i
       TYPE(keyword_type), POINTER                        :: keyword
@@ -125,7 +128,7 @@ CONTAINS
       CALL keyword_release(keyword)
 
 #if defined(__ELPA) && defined(__LIBXSMM)
-      default_i_val = MERGE(8+3*MIN(libxsmm_get_target_archid()-LIBXSMM_X86_SSE4, 3), 1, &
+      default_i_val = MERGE(8+3*MIN(libxsmm_get_target_archid()-LIBXSMM_X86_SSE4, LIBXSMM_X86_AVX512-LIBXSMM_X86_SSE4), 1, &
                             LIBXSMM_X86_SSE4 .LE. libxsmm_get_target_archid())
 #else
       default_i_val = 1 ! AUTO
