@@ -75,7 +75,7 @@ CONTAINS
       CHARACTER(len=*), PARAMETER :: routineN = 'create_global_section', &
          routineP = moduleN//':'//routineN
 
-      INTEGER                                            :: i
+      INTEGER                                            :: default_i_val, i
       TYPE(keyword_type), POINTER                        :: keyword
       TYPE(section_type), POINTER                        :: print_key, sub_section
 
@@ -105,17 +105,18 @@ CONTAINS
       CALL section_add_keyword(section, keyword)
       CALL keyword_release(keyword)
 
+#if defined(__ELPA)
+      default_i_val = do_diag_elpa
+#elif defined(__SCALAPACK2)
+      default_i_val = do_diag_sl2
+#else
+      default_i_val = do_diag_sl
+#endif
       CALL keyword_create( &
          keyword, name="PREFERRED_DIAG_LIBRARY", &
          description="Specifies the DIAGONALIZATION library to be used. If not available, the standard scalapack is used", &
          usage="PREFERRED_DIAG_LIBRARY ELPA", &
-#if defined(__ELPA)
-         default_i_val=do_diag_elpa, &
-#elif defined(__SCALAPACK2)
-         default_i_val=do_diag_sl2, &
-#else
-         default_i_val=do_diag_sl, &
-#endif
+         default_i_val=default_i_val, &
          enum_i_vals=(/do_diag_sl, do_diag_sl2, do_diag_elpa/), &
          enum_c_vals=s2a("SL", "SL2", "ELPA"), &
          enum_desc=s2a("Standard scalapack: syevd", "Scalapack 2.0: syevr", "ELPA"), &
@@ -123,15 +124,16 @@ CONTAINS
       CALL section_add_keyword(section, keyword)
       CALL keyword_release(keyword)
 
+#if defined(__ELPA) && defined(__LIBXSMM)
+      default_i_val = MERGE(8+3*MIN(libxsmm_get_target_archid()-LIBXSMM_X86_SSE4, 3), 1, &
+                            LIBXSMM_X86_SSE4 .LE. libxsmm_get_target_archid())
+#else
+      default_i_val = 1 ! AUTO
+#endif
       CALL keyword_create( &
          keyword, name="ELPA_KERNEL", &
          description="Specifies the kernel to be used when ELPA is in use", &
-#if defined(__ELPA) && defined(__LIBXSMM)
-         default_i_val=MERGE(8 + 3 * MIN(libxsmm_get_target_archid() - LIBXSMM_X86_SSE4, 3), 1, &
-                             LIBXSMM_X86_SSE4.LE.libxsmm_get_target_archid()), &
-#else
-         default_i_val=1, &
-#endif
+         default_i_val=MIN(default_i_val, get_elpa_number_kernels()), &
          enum_i_vals=(/(i, i=1, get_elpa_number_kernels())/), &
          enum_c_vals=get_elpa_kernel_names(), &
          enum_desc=get_elpa_kernel_descriptions())
